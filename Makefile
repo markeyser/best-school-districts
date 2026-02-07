@@ -3,113 +3,57 @@ SHELL := /bin/bash
 .DEFAULT_GOAL=help
 
 #-----------------------------------------------------------------------
-# Poetry- Python dependency management and packaging
+# Conda/Mamba environment management
 #-----------------------------------------------------------------------
+ENV_NAME ?= bestschooldistricts-py310
+ENV_FILE ?= environment.yml
+ENV_DEV_FILE ?= environment-dev.yml
 PKG ?= $(shell bash -c 'read -p "PackageName: " PackageName; echo $$PackageName')
 PKG_VERSION ?= $(shell bash -c 'read -p "PackageVersion: " PackageVersion; echo $$PackageVersion')
-GRP ?= $(shell bash -c 'read -p "GroupName: " GroupName; echo $$GroupName')
-PYTHON_VERSION ?= $(shell bash -c 'read -p "Enter Python version (e.g., 3.10.4): " python_version; echo $$python_version')
 
-poetry_use_python: # Set a specific Python version for the project using Poetry
-	@echo "Setting Python version $(PYTHON_VERSION) for the project..."
-	@poetry env use $(PYTHON_VERSION)
+mamba_init_shell: # Initialize conda for the active shell type
+	@echo "Initializing Conda for your shell..."
+	@conda init "$$(basename "$$SHELL")"
 
-poetry_install_dependencies: # Install project dependencies using Poetry
-	@echo "Installing project dependencies with Poetry..."
-	@poetry install
+mamba_env_create: # Create the base runtime environment
+	@echo "Creating environment $(ENV_NAME) from $(ENV_FILE)..."
+	@mamba env create -n $(ENV_NAME) -f $(ENV_FILE)
 
-poetry_activate_shell: # Activate the Poetry virtual environment
-	@echo "Activating the Poetry virtual environment..."
-	@poetry shell
+mamba_env_update_dev: # Install dev/test/docs packages into existing env
+	@echo "Updating environment $(ENV_NAME) with $(ENV_DEV_FILE)..."
+	@mamba env update -n $(ENV_NAME) -f $(ENV_DEV_FILE)
 
-poetry_show_dependencies: # Show project dependencies
-	@echo "Listing project dependencies..."
-	@poetry show
+mamba_env_remove: # Remove the environment
+	@echo "Removing environment $(ENV_NAME)..."
+	@mamba env remove -n $(ENV_NAME)
 
-poetry_list_environments: # List all Poetry environments
-	@echo "Listing all Poetry environments..."
-	@poetry env list
+mamba_env_list: # List conda environments
+	@echo "Listing conda environments..."
+	@conda env list
 
-poetry_environment_path: # Get the path to the Poetry virtual environment
-	@echo "Fetching Poetry environment path..."
-	@poetry env info --path
+mamba_env_export: # Export exact package set for the active env
+	@echo "Exporting environment $(ENV_NAME) to environment-lock.yml..."
+	@conda env export -n $(ENV_NAME) --no-builds > environment-lock.yml
 
-poetry_add_specific_version: # Add a specific version of a dependency
-	@echo "Adding $(PKG) with version $(PKG_VERSION)..."
-	@poetry add $(PKG)@$(PKG_VERSION)
+mamba_add: # Add a conda package to runtime env and update manifest manually
+	@echo "Installing package $(PKG) in $(ENV_NAME)..."
+	@mamba install -n $(ENV_NAME) $(PKG)
 
-update_path: # Update PATH to include Poetry's bin directory
-	@echo "Adding Poetry's bin directory to PATH in ~/.bashrc..."
-	@echo 'export PATH="/home/azureuser/.local/bin:$$PATH"' >> ~/.bashrc
-	@echo "PATH updated in ~/.bashrc for future sessions."
+mamba_add_version: # Add a specific conda package version
+	@echo "Installing package $(PKG)=$(PKG_VERSION) in $(ENV_NAME)..."
+	@mamba install -n $(ENV_NAME) $(PKG)=$(PKG_VERSION)
 
-poetry_verify: # Verify that Poetry is correctly installed
-	@echo "Verifying Poetry installation..."
-	poetry --version
+mamba_run_main: # Run main module in the conda environment
+	@echo "Running project main module with conda env $(ENV_NAME)..."
+	@conda run -n $(ENV_NAME) python src/bestschooldistricts/main.py
 
-poetry_dependencies: # Install project dependencies using Poetry
-	@echo "Installing project dependencies with Poetry..."
-	@poetry install
+mamba_test: # Run pytest in the conda environment
+	@echo "Running tests with conda env $(ENV_NAME)..."
+	@conda run -n $(ENV_NAME) pytest
 
-poetry_update: # Update project dependencies
-	@echo "Updating project dependencies..."
-	@poetry update
-
-poetry_check: # Check for consistency between pyproject.toml and poetry.lock
-	@echo "Checking for consistency..."
-	@poetry check
-
-poetry_add: # Add a new regular dependency
-	@echo "Adding a new dependency..."
-	@poetry add $(PKG)
-
-poetry_add_dev: # Add a new development dependency
-	@echo "Adding a new dependency..."
-	@poetry add --dev $(PKG)
-
-poetry_add_group: # Add a new dependency to a specific group
-	@echo "Adding a new dependency..."
-	@poetry add $(PKG) --group=$(GRP)
-
-poetry_remove: # Remove a regular dependency
-	@echo "Removing a dependency..."
-	@poetry remove $(PKG)
-
-poetry_remove_dev: # Remove a development dependency
-	@echo "Removing a dependency..."
-	@poetry remove --dev $(PKG)
-
-poetry_remove_group: # Remove a dependency from a specific group
-	@echo "Removing a dependency..."
-	@poetry remove $(PKG) --group=$(GRP)
-
-poetry_build: # Build the project package
-	@echo "Building the project..."
-	@poetry build
-
-poetry_publish: # Publish the project to PyPI
-	@echo "Publishing the project..."
-	@poetry publish --build
-
-poetry_run: # Run the main script of the project
-	@echo "Running the project..."
-	@poetry run python main.py
-
-poetry_test: # Run tests using pytest (assuming pytest is a dependency)
-	@echo "Running tests..."
-	@poetry run pytest
-
-poetry_test_coverage: # Run tests with coverage and open the coverage report
-	@echo "Running tests with coverage..."
-	@poetry run pytest --cov=src/acroexpandpackage --cov-report html tests/ && open htmlcov/index.html
-
-poetry_env_info: # Display Poetry environment information
-	@echo "Fetching Poetry environment information..."
-	@poetry env info
-
-poetry_env_path: # Get the path to the Poetry virtual environment
-	@echo "Fetching Poetry environment information..."
-	@poetry env info --path
+mamba_test_coverage: # Run tests with coverage in the conda env
+	@echo "Running tests with coverage in $(ENV_NAME)..."
+	@conda run -n $(ENV_NAME) pytest --cov=src/bestschooldistricts --cov-report html tests/ && open htmlcov/index.html
 
 #-----------------------------------------------------------------------
 # Ruff Code Linter
@@ -266,4 +210,3 @@ job_kill: # Force kill the job
 help: # Show this help
 	@egrep -h '\s#\s' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?# "}; \
 	{printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
