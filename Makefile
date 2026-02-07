@@ -5,7 +5,7 @@ SHELL := /bin/bash
 #-----------------------------------------------------------------------
 # Conda/Mamba environment management
 #-----------------------------------------------------------------------
-ENV_NAME ?= bestschooldistricts-py310
+ENV_NAME ?= fairfield_housing
 ENV_FILE ?= environment.yml
 ENV_DEV_FILE ?= environment-dev.yml
 PKG ?= $(shell bash -c 'read -p "PackageName: " PackageName; echo $$PackageName')
