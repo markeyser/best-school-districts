@@ -85,6 +85,10 @@ data/features/*
 .DS_Store
 **/.DS_Store
 
+## Local Debug Artifacts ##
+
+debug_page.html
+
 ## Azure Machine Learning ##
 
 *.amltmp
