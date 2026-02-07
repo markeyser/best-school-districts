@@ -1,26 +1,26 @@
-name: bestschooldistricts-py310
+name: fairfield_housing
 channels:
   - conda-forge
+  - nodefaults
 dependencies:
-  - python=3.10
-  - pip
+  - python=3.11
   - pandas
   - numpy
   - scipy
   - scikit-learn
-  - requests
-  - beautifulsoup4
-  - selenium
-  - geopandas
   - gdal
-  - fiona
+  - geopandas
   - shapely
+  - fiona
   - pyproj
   - rtree
+  - duckdb
+  - networkx
+  - osmnx
+  - jupyterlab
+  - ipywidgets
+  - nodejs
+  - pip
   - pip:
-      - simplekml==1.3.6
-      - fake-useragent==2.0.3
-      - undetected-chromedriver==3.5.5
-      - selenium-stealth==1.0.6
-      - scrapy-rotating-proxies==0.6.2
-      - 2captcha-python==1.5.1
+      - keplergl
+      - pydeck

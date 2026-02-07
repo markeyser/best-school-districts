@@ -1,6 +1,7 @@
-name: bestschooldistricts-py310
+name: fairfield_housing
 channels:
   - conda-forge
+  - nodefaults
 dependencies:
   - pre-commit
   - black=23.7.0
