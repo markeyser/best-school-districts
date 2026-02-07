@@ -95,19 +95,25 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
 3. **Create the runtime environment**
 
     ```sh
-    mamba env create -n bestschooldistricts-py310 -f environment.yml
+    mamba env create -n fairfield_housing -f environment.yml
     ```
 
 4. **Install dev/test/docs dependencies**
 
     ```sh
-    mamba env update -n bestschooldistricts-py310 -f environment-dev.yml
+    mamba env update -n fairfield_housing -f environment-dev.yml
     ```
 
 5. **Activate the environment**
 
     ```sh
-    mamba activate bestschooldistricts-py310
+    mamba activate fairfield_housing
+    ```
+
+    If Kepler widgets do not render in Jupyter, run:
+
+    ```sh
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager keplergl-jupyter
     ```
 
 6. **Adding Extensions in VS Code**
