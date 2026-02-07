@@ -76,60 +76,41 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
 
 ### Installation
 
-1. Create a new Conda environment by cloning the base environment:
+1. **Install Miniforge (Mamba + Conda)**
 
     ```sh
-    conda create --name bestschooldistricts_env --clone base
+    brew install miniforge
+    conda init zsh
     ```
 
-    This command creates a new Conda environment named
-    `bestschooldistricts_env` by cloning the existing `base`
-    environment, which includes a long list of Python packages needed
-    for development.
+    Close and reopen your terminal after `conda init`.
 
-    >Please ensure you use the `bestschooldistricts_env` virtual
-    >environment name. The `.vscode/settings.json` file assumes that the
-    >path to your virtual environment is
-    >`/home/sagemaker-user/.conda/envs/bestschooldistricts_env`. If
-    >your virtual environment path differs, please update the
-    >`.vscode/settings.json` file accordingly.
-
-
-1. **Activate the new Conda environment**
-
-    ```sh
-    conda activate bestschooldistricts_env
-    ```
 2. **Clone the repository**
 
     ```sh
-    git clone git@git.nylcloud.com:CDSAi/fp-servicesage-model.git
-    cd fp-servicesage-model
+    git clone git@github.com:markeyser/best-school-districts.git
+    cd best-school-districts
     ```
 
-3. **Install Poetry using pip**
+3. **Create the runtime environment**
 
     ```sh
-    pip install poetry
+    mamba env create -n bestschooldistricts-py310 -f environment.yml
     ```
 
-4. **Install all dependencies (including development dependencies) using
-   Poetry**
+4. **Install dev/test/docs dependencies**
 
     ```sh
-    poetry install
+    mamba env update -n bestschooldistricts-py310 -f environment-dev.yml
     ```
 
-    This command tells `poetry` to install the package and include both
-    the main dependencies specified under `[tool.poetry.dependencies]`
-    and the development dependencies specified under
-    `[tool.poetry.dev-dependencies]` in the `pyproject.toml` file.
+5. **Activate the environment**
 
-    > Notice we are using Conda to create and manage the Python virtual
-    > environment, and we are using Poetry to handle package
-    > installation and dependency management within that environment.
+    ```sh
+    mamba activate bestschooldistricts-py310
+    ```
 
-5. **Adding Extensions in VS Code**
+6. **Adding Extensions in VS Code**
 
    1. **Find Extensions View**: Open the Extensions view by clicking the
       Extensions icon in the Sidebar or by pressing `Ctrl+Shift+X`.
@@ -146,7 +127,7 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
    4. **Confirm Installation**: After selecting the extensions, confirm
       the installation and wait for the process to complete.
 
-6. **Create the `.env` file**
+7. **Create the `.env` file**
 
     ```sh
     touch .env
@@ -159,7 +140,7 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
     DATABASE_URL=your_database_url
     ```
 
-7. **Updating CSpell Dictionary with Python Terms**
+8. **Updating CSpell Dictionary with Python Terms**
 
     Improve spell checking by adding Python library terms to CSpell:
 
@@ -170,7 +151,7 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
     This enriches CSpell's dictionary with terms from your project's
     Python libraries, reducing false positives on technical jargon.
 
-8. **Set up your environment variables**
+9. **Set up your environment variables**
 
     Before contributing to the project, you need to set up your
     environment variables to access different AWS resources. Follow
@@ -188,7 +169,7 @@ Sure, here's an updated version of the "Prerequisites" section in your README.md
     AWS_DEFAULT_REGION=your_default_region
     ```
 
-9.  **Set up Docker (if needed)**
+10. **Set up Docker (if needed)**
 
     ```sh
     docker build -t rag-qa-system .
@@ -275,7 +256,7 @@ To run all the tests, use the following
 command
 
 ```sh
-poetry run pytest
+pytest
 ```
 
 ### Formatting, Linting & Type Checking
@@ -284,17 +265,17 @@ Use `black` for code formatting, `ruff` for linting, and `mypy` for type
 checking:
 
 ```sh
-poetry run black .
-poetry run ruff check --preview --fix .
-poetry run mypy .
+black .
+ruff check --preview --fix .
+mypy .
 ```
 
 To run all three commands for a single file:
 
 ```sh
-poetry run black path/to/your/file.py
-poetry run ruff check --preview --fix path/to/your/file.py
-poetry run mypy path/to/your/file.py
+black path/to/your/file.py
+ruff check --preview --fix path/to/your/file.py
+mypy path/to/your/file.py
 ```
 
 Additionally, you can use `pre-commit` to run checks:
@@ -309,18 +290,18 @@ are formatted, linted, and type-checked.**
 
 ### Explanation
 
-- **`poetry run black .`**: Formats your code to conform to the Black
+- **`black .`**: Formats your code to conform to the Black
   code style.
-- **`poetry run ruff check --preview --fix .`**: Runs Ruff to check for
+- **`ruff check --preview --fix .`**: Runs Ruff to check for
   linting issues and automatically fixes them.
-- **`poetry run mypy .`**: Runs mypy to check for type errors in your
+- **`mypy .`**: Runs mypy to check for type errors in your
   code.
-- **`poetry run black path/to/your/file.py`**: Formats the specified
+- **`black path/to/your/file.py`**: Formats the specified
   file to conform to the Black code style.
-- **`poetry run ruff check --preview --fix path/to/your/file.py`**: Runs
+- **`ruff check --preview --fix path/to/your/file.py`**: Runs
   Ruff to check for linting issues in the specified file and
   automatically fixes them.
-- **`poetry run mypy path/to/your/file.py`**: Runs mypy to check for
+- **`mypy path/to/your/file.py`**: Runs mypy to check for
   type errors in the specified file.
 - **`pre-commit run --all-files`**: Runs all configured `pre-commit`
   hooks on all files.
